@@ -24,8 +24,16 @@ class AuthProvider with ChangeNotifier {
   String? get refreshToken => _user?.refreshToken;
 
   Future<void> login(String username, String password) async {
+    // Your login implementation code here
+  }
+
+  Future<void> logout() async {
+    // Your logout implementation code here
+  }
+
+  Future<void> signup(String username, String password) async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/api/login/'),
+      Uri.parse('http://127.0.0.1:8000/api/signup/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -35,45 +43,22 @@ class AuthProvider with ChangeNotifier {
       }),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       final responseData = jsonDecode(response.body);
-      final username = responseData['user_data']?['username'];
+      final username = responseData['username'];
       final accessToken = responseData['access_token'];
-      final refreshToken = responseData['refresh_token'];
 
-      if (username != null && accessToken != null && refreshToken != null) {
+      if (username != null && accessToken != null) {
         _user = User(
-            username: username,
-            accessToken: accessToken,
-            refreshToken: refreshToken);
+          username: username,
+          accessToken: accessToken,
+        );
         notifyListeners();
       } else {
         throw Exception('Failed to get user data');
       }
     } else {
-      throw Exception('Failed to login');
-    }
-  }
-
-  Future<void> logout() async {
-    final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/api/logout/'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization':
-            'Bearer ${_user?.accessToken}', // access accessToken from AuthProvider
-      },
-      body: jsonEncode(<String, String>{
-        'refresh_token':
-            _user?.refreshToken ?? '', // access refreshToken from AuthProvider
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      _user = null;
-      notifyListeners();
-    } else {
-      throw Exception('Failed to logout');
+      throw Exception('Failed to signup');
     }
   }
 }

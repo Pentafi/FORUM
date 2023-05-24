@@ -4,9 +4,24 @@ import 'package:frontend/responsive.dart';
 import '../../components/background.dart';
 import 'components/sign_up_top_image.dart';
 import 'components/signup_form.dart';
+import 'package:frontend/auth_provider.dart';
 
 class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  SignUpScreen({Key? key}) : super(key: key);
+
+  final authProvider = AuthProvider();
+
+    void signup(String username, String password) {
+    // Call your signup API endpoint or perform any necessary actions
+    // using the authProvider instance
+    authProvider.signup(username, password)
+      .then((_) {
+        // Signup successful, navigate to the next screen or perform any necessary actions
+      })
+      .catchError((error) {
+        // Handle signup error
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +43,6 @@ class SignUpScreen extends StatelessWidget {
                       child: SignUpForm(),
                     ),
                     SizedBox(height: defaultPadding / 2),
-                    // SocalSignUp()
                   ],
                 ),
               )
