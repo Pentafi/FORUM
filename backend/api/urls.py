@@ -1,9 +1,6 @@
-# api/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ForumViewSet, TopicViewSet, CommentViewSet, AuthViewSet
-
-auth_viewset = AuthViewSet.as_view({'post': 'login', 'put': 'signup'})
+from .views import ForumViewSet, TopicViewSet, CommentViewSet, LoginView, RegisterView
 
 router = DefaultRouter()
 router.register(r'forums', ForumViewSet)
@@ -12,7 +9,6 @@ router.register(r'comments', CommentViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api/login/', auth_viewset, name='login'),
-    path('api/signup/', auth_viewset, name='signup'),
+    path('auth/login/', LoginView.as_view(), name='login'),
+    path('auth/register/', RegisterView.as_view({'post': 'create'}), name='register'),
 ]
-

@@ -4,7 +4,32 @@ from rest_framework.response import Response
 from .models import Forum, Topic, Comment
 from .serializers import ForumSerializer, TopicSerializer, CommentSerializer
 from django.contrib.auth.models import User
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from .serializers import UserSerializer, RegisterSerializer
+from rest_framework.permissions import AllowAny
+from rest_framework.authtoken.serializers import AuthTokenSerializer
 
+class LoginView(ObtainAuthToken):
+    serializer_class = AuthTokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'username': user.username
+        })
+
+class RegisterView(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    permission_classes = [AllowAny]  
+    serializer_class = RegisterSerializer
+    
 class ForumViewSet(viewsets.ModelViewSet):
     queryset = Forum.objects.all()
     serializer_class = ForumSerializer
@@ -16,27 +41,3 @@ class TopicViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-
-class AuthViewSet(viewsets.ViewSet):
-    def login(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return Response({'detail': 'Login successful'})
-        else:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
-    def signup(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        # Perform any additional validations or checks here before creating the user
-        user = User.objects.create_user(username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return Response({'detail': 'Signup successful'})
-        else:
-            return Response({'error': 'Signup failed'}, status=status.HTTP_400_BAD_REQUEST)

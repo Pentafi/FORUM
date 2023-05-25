@@ -4,18 +4,35 @@ import '../../components/background.dart';
 import 'components/login_form.dart';
 import 'components/login_screen_top_image.dart';
 import 'package:frontend/auth_provider.dart';
-
+import 'package:frontend/Screens/forum_list_screen.dart';
 class LoginScreen extends StatelessWidget {
-   const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   static AuthProvider authProvider = AuthProvider();
+
+  void login(String username, String password, BuildContext context) {
+    authProvider.login(username, password)
+      .then((_) {
+        // Login successful, navigate to the next screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ForumListScreen(),
+          ),
+        );
+      })
+      .catchError((error) {
+        // Handle login error
+        // This is where you can show a message to the user that login failed
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Background(
       child: SingleChildScrollView(
         child: Responsive(
-          mobile: const MobileLoginScreen(),
+          mobile: MobileLoginScreen(login: login),
           desktop: Row(
             children: [
               const Expanded(
@@ -24,10 +41,14 @@ class LoginScreen extends StatelessWidget {
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     SizedBox(
                       width: 450,
-                      child: LoginForm(),
+                      child: LoginForm(
+                        onLoginButtonPressed: (username, password) {
+                          login(username, password, context);
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -38,21 +59,14 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-
-  void login(String username, String password) {
-    authProvider.login(username, password)
-      .then((_) {
-        // Login successful, navigate to the next screen or perform any necessary actions
-      })
-      .catchError((error) {
-        // Handle login error
-      });
-  }
 }
 
 class MobileLoginScreen extends StatelessWidget {
+  final void Function(String username, String password, BuildContext context) login;
+
   const MobileLoginScreen({
     Key? key,
+    required this.login,
   }) : super(key: key);
 
   @override
@@ -62,11 +76,15 @@ class MobileLoginScreen extends StatelessWidget {
       children: <Widget>[
         const LoginScreenTopImage(),
         Row(
-          children: const [
+          children: [
             Spacer(),
             Expanded(
               flex: 8,
-              child: LoginForm(),
+              child: LoginForm(
+                onLoginButtonPressed: (username, password) {
+                  login(username, password, context);
+                },
+              ),
             ),
             Spacer(),
           ],

@@ -5,7 +5,7 @@ import 'package:frontend/models/topic.dart';
 import 'package:http/http.dart' as http;
 
 class APIService {
-  final String _baseUrl = "http://your-backend-url/";
+  final String _baseUrl = "http://127.0.0.1:8000";
 
   Future<List<Forum>> getForums() async {
     final response = await http.get(Uri.parse('$_baseUrl/api/forums/'));

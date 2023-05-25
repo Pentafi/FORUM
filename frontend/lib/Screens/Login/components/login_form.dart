@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Screens/Signup/signup_screen.dart.dart';
-import 'package:frontend/Screens/forum_list_screen.dart';
 import 'package:frontend/constant.dart';
 import '../../../components/already_have_an_account_acheck.dart';
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
   const LoginForm({
     Key? key,
+    required this.onLoginButtonPressed,
   }) : super(key: key);
+
+  final void Function(String username, String password) onLoginButtonPressed;
+
+  @override
+  _LoginFormState createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +25,10 @@ class LoginForm extends StatelessWidget {
       child: Column(
         children: [
           TextFormField(
+            controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             cursorColor: kPrimaryColor,
-            onSaved: (email) {},
             decoration: const InputDecoration(
               hintText: "Your email",
               prefixIcon: Padding(
@@ -30,6 +40,7 @@ class LoginForm extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultPadding),
             child: TextFormField(
+              controller: _passwordController,
               textInputAction: TextInputAction.done,
               obscureText: true,
               cursorColor: kPrimaryColor,
@@ -47,11 +58,7 @@ class LoginForm extends StatelessWidget {
             tag: "login_btn",
             child: ElevatedButton(
               onPressed: () {
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const ForumListScreen ();
-                  },
-                );
+                widget.onLoginButtonPressed(_emailController.text, _passwordController.text);
               },
               child: Text(
                 "Login".toUpperCase(),
@@ -74,5 +81,12 @@ class LoginForm extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

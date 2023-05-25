@@ -1,3 +1,7 @@
 {
-    "cmake.sourceDirectory": "D:/Mico/3rd yr college/Second Semester/IPT/frontend/windows/flutter"
+    "cmake.sourceDirectory": "D:/Mico/3rd yr college/Second Semester/IPT/frontend/windows/flutter",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
+    "python.formatting.provider": "none"
 }
