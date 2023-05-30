@@ -9,6 +9,6 @@ router.register(r'comments', CommentViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('auth/login/', LoginView.as_view(), name='login'),
-    path('auth/register/', RegisterView.as_view({'post': 'create'}), name='register'),
+    path('rest-auth/login/', LoginView.as_view(), name='login'),
+    path('rest-auth/register/', RegisterView.as_view({'post': 'create'}), name='register'),
 ]

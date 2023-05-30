@@ -3,22 +3,21 @@ from rest_framework import serializers
 from .models import Forum, Topic, Comment
 from rest_framework.authtoken.models import Token
 
-# User Serializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'password')
+        fields = ('id', 'email', 'password')
         extra_kwargs = {'password': {'write_only': True, 'required': True}}
 
-# Register Serializer
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User  # Remove the parentheses
-        fields = ('id', 'username', 'password')
+        model = User 
+        fields = ('id', 'email', 'password')
         extra_kwargs = {'password': {'write_only': True, 'required': True}}
 
     def create(self, validated_data):
-        user = User.objects.create_user(validated_data['username'], validated_data['password'])  # Remove the parentheses
+        user = User.objects.create_user(
+            username=validated_data['email'], email=validated_data['email'], password=validated_data['password'])
         return user
 
 class ForumSerializer(serializers.ModelSerializer):
